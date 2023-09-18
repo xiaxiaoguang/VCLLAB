@@ -24,7 +24,7 @@
 
 我们的 Lab 位于网址 [https://gitee.com/pku-vcl/vcx2023.git](https://gitee.com/pku-vcl/vcx2023.git) 。首先你需要按照 [Git 官网](https://git-scm.com/) 的指引安装 Git 。安装好 Git 之后，使用 Git 将 Lab 仓库 clone 到你喜欢的目录下，这将建立一个名为 `vcx` 的目录：这就是你这个学期做所有 Lab 的目录。
 
-```
+```shell
 git clone https://gitee.com/pku-vcl/vcx2023.git
 ```
 
@@ -45,7 +45,7 @@ git clone https://gitee.com/pku-vcl/vcx2023.git
 
 我们的 Lab 使用 xmake ([Home](https://xmake.io/)) 作为构建工具，而 xmake 依赖 Git 完成包管理等核心功能，请确保已经安装了 Git 。通过 [xmake安装说明](https://xmake.io/#/guide/installation) 中对于你的平台的描述，安装 xmake。完成安装后，可以在终端中运行 `xmake --version` 来确认安装正确。
 
-接下来，你只需要在终端中进入 `vcx` 目录（下同），然后在命令行中输入 `xmake`并执行，你就会看到 xmake 自动识别你的平台，下载所有依赖库并完成编译和链接。继续执行 `xmake run lab0`，如果一切顺利，你会看到一个界面，通过界面可以切换显示方框中的红色三角形与一个彩色三角形。
+接下来，你只需要在终端中进入 `vcx` 目录（下同），然后在命令行中输入 `xmake` 并执行，你就会看到 xmake 自动识别你的平台，下载所有依赖库并完成编译和链接。继续执行 `xmake run lab0`，如果一切顺利，你会看到一个界面，通过界面可以切换显示方框中的红色三角形与一个彩色三角形。
 
 <img src="./images/lab0-case1.png" alt="case-1" style="zoom: 50%;" /><img src="./images/lab0-case2.png" alt="case-2" style="zoom: 50%;" />
 
@@ -67,10 +67,10 @@ git clone https://gitee.com/pku-vcl/vcx2023.git
 
  -  VS Code（图形化配置方案）：
     1. 安装 C/C++ 插件与 XMake 插件。
-    2. 选中顶部的 View -> Command Palette... ，输入 XMake: ，选择 XMake: Update Intellisense。
-    3. 选中顶部的 View -> Command Palette... ，输入 C/C++: ，选择 C/C++: Edit Configurations (UI)。
-    4. 选中 C++ standard 项，修改设置为 C++20 。
-    5. 拉到最下方，点开Advanced Settings，在 Compile Commands 一栏输入 ${workspaceFolder}/.vscode/compile_commands.json
+    2. 选中顶部的 `View -> Command Palette...` ，输入 `XMake:` ，选择 `XMake: Update Intellisense` 。
+    3. 选中顶部的 `View -> Command Palette...` ，输入 `C/C++:` ，选择 `C/C++: Edit Configurations (UI)` 。
+    4. 选中 `C++ standard` 项，修改设置为 `C++20` 。
+    5. 拉到最下方，点开 `Advanced Settings` ，在 `Compile Commands` 一栏输入 `${workspaceFolder}/.vscode/compile_commands.json`
     6. 返回 cpp 文件，现在 VS Code 应该已经能提供智能提示等功能了。
 
  -  *VS Code（命令行配置方案）：
@@ -87,20 +87,27 @@ git clone https://gitee.com/pku-vcl/vcx2023.git
 
 - Q. 网络错误，无法安装软件包怎么办？
 
-- A. 有几种解决方法：
-  - 打开本地代理，使用命令行设置好环境变量HTTPS_PROXY="127.0.0.1:<port>"，之后在命令行中运行xmake
-  - 可运行xmake g --pkg_searchdirs=<download-dir>并根据报错提示，手动下载软件包并重命名为指定名字
-  - 可运行xmake g --proxy_pac=github_mirror.lua将github.com重定向到hub.fastgit.xyz（现不建议使用）
-  - 注：运行上面命令如果不起作用，可运行xmake g -c命令复原
-
+- A. 有两种解决方法：
+  - 打开本地代理，使用命令行设置好环境变量 `HTTPS_PROXY="127.0.0.1:<port>"`，之后在命令行中运行xmake
+  
+    + 例如，当你使用pkuwalless时，默认端口一般是7890，此时在命令行中运行：
+  
+      ```shell
+      HTTPS_PROXY="127.0.0.1:7890" xmake
+      ```
+  
+  - 可运行 `xmake g --pkg_searchdirs=<download-dir>` 并根据报错提示，手动下载软件包并重命名为指定名字
+  
+    - 注：运行上面命令如果不起作用，可运行 `xmake g -c` 命令复原
+  
 - Q. 提示找不到编译器怎么办？
 
 - A. xmake 在各平台会默认使用该平台原生工具链，例如Windows上的Visual Studio，MacOS上的XCode，Linux上的GCC，而对其他的工具链会报错找不到编译器。如果要使用Msys2提供的GCC编译器，在windows上运行：
-  ```
+  ```shell
   xmake f -p mingw
   ```
   再执行编译步骤。如果要使用Clang编译器，运行
-  ```
+  ```shell
   xmake f --toolchain=clang
   ```
   再执行编译步骤。
@@ -108,15 +115,15 @@ git clone https://gitee.com/pku-vcl/vcx2023.git
 - Q. 我的系统上安装了多个编译器，怎样指定使用哪一个编译器编译？
 
 - A. xmake 对编译器提供了全局缓存。如果你新安装了一个编译器，需要使用`xmake g -c`清理全局缓存，再在项目目录运行`xmake f -c`重新探测编译器。对不同的编译器，有不同指定版本的方式。例如，指定使用Visual Studio 2022：
-  ```
+  ```shell
   xmake f --vs=2022
   ```
   指定使用gcc11：
-  ```
+  ```shell
   xmake f --toolchain=gcc-11
   ```
 
-- Q. 我使用 Mac OS 系统，安装时报错 invalid Darwin version number: macos 12.3
+- Q. 我使用 Mac OS 系统，安装时报错 `invalid Darwin version number: macos 12.3`
 
 - A. 使用的 XCode 版本过低，将 XCode 更新到最新版本即可。
 
