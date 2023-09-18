@@ -28,7 +28,12 @@
 git clone https://gitee.com/pku-vcl/vcx2023.git
 ```
 
-你可以使用 `git checkout lab0` 切换到lab0的分支（请确保先使用 `git commit` 保存了此前的修改）。
+你可以使用 `git checkout lab0` 切换到lab0的分支：
+
+```shell
+cd vcx2023
+git checkout lab0
+```
 
 ### 2 - Prepare Compiler
 
@@ -45,7 +50,9 @@ git clone https://gitee.com/pku-vcl/vcx2023.git
 
 我们的 Lab 使用 xmake ([Home](https://xmake.io/)) 作为构建工具，而 xmake 依赖 Git 完成包管理等核心功能，请确保已经安装了 Git 。通过 [xmake安装说明](https://xmake.io/#/guide/installation) 中对于你的平台的描述，安装 xmake。完成安装后，可以在终端中运行 `xmake --version` 来确认安装正确。
 
-接下来，你只需要在终端中进入 `vcx` 目录（下同），然后在命令行中输入 `xmake` 并执行，你就会看到 xmake 自动识别你的平台，下载所有依赖库并完成编译和链接。继续执行 `xmake run lab0`，如果一切顺利，你会看到一个界面，通过界面可以切换显示方框中的红色三角形与一个彩色三角形。
+接下来，你只需要在终端中进入 `vcx2023` 目录（下同），然后在命令行中输入 `xmake` 并执行，你就会看到 xmake 自动识别你的平台，下载所有依赖库并完成编译和链接；注意这里可能遇到一些网络问题，可以参见FAQ中网络错误的部分。
+
+继续执行 `xmake run lab0`，如果一切顺利，你会看到一个界面，通过界面可以切换显示方框中的红色三角形与一个彩色三角形。
 
 <img src="./images/lab0-case1.png" alt="case-1" style="zoom: 50%;" /><img src="./images/lab0-case2.png" alt="case-2" style="zoom: 50%;" />
 
@@ -92,8 +99,24 @@ git clone https://gitee.com/pku-vcl/vcx2023.git
   
     + 例如，当你使用pkuwalless时，默认端口一般是7890，此时在命令行中运行：
   
+    + MacOS/Linux
+  
       ```shell
       HTTPS_PROXY="127.0.0.1:7890" xmake
+      ```
+  
+    + Windows cmd
+  
+      ```shell
+      set HTTPS_PROXY=127.0.0.1:7890
+      xmake
+      ```
+  
+    + Windows Powershell
+  
+      ```shell
+      $env:HTTPS_PROXY = "127.0.0.1:7890"
+      xmake
       ```
   
   - 可运行 `xmake g --pkg_searchdirs=<download-dir>` 并根据报错提示，手动下载软件包并重命名为指定名字
