@@ -48,7 +48,7 @@ git checkout lab0
 
 ### 3 - Prepare Git and xmake
 
-我们的 Lab 使用 xmake ([Home](https://xmake.io/)) 作为构建工具，而 xmake 依赖 Git 完成包管理等核心功能，请确保已经安装了 Git 。通过 [xmake安装说明](https://xmake.io/#/guide/installation) 中对于你的平台的描述，安装 xmake。完成安装后，可以在终端中运行 `xmake --version` 来确认安装正确。
+我们的 Lab 使用 xmake ([Home](https://xmake.io/)) 作为构建工具，而 xmake 依赖 Git 完成包管理等核心功能，请确保已经安装了 [Git](https://git-scm.com/) 。通过 [xmake安装说明](https://xmake.io/#/guide/installation) 中对于你的平台的描述，安装 xmake。完成安装后，可以在终端中运行 `xmake --version` 来确认安装正确。
 
 接下来，你只需要在终端中进入 `vcx2023` 目录（下同），然后在命令行中输入 `xmake` 并执行，你就会看到 xmake 自动识别你的平台，下载所有依赖库并完成编译和链接；注意这里可能遇到一些网络问题，可以参见FAQ中网络错误的部分。
 
@@ -123,7 +123,13 @@ git checkout lab0
   
   - 可运行 `xmake g --pkg_searchdirs=<download-dir>` 并根据报错提示，手动下载软件包并重命名为指定名字
   
-    - 注：运行上面命令如果不起作用，可运行 `xmake g -c` 命令复原
+    + 一般情况，下载的软件包不用改名就可以识别到。一种方便的方式是将浏览器的默认下载路径加入搜索路径，例如如果在 Windows 上使用 Edge 浏览器，则默认下载路径为 `C:\Users\<username>\Downloads`，设置
+
+      ```shell
+      xmake g --pkg_searchdirs=C:\Users\<username>\Downloads
+      ```
+
+      这样在 VSCode 自带终端等比较智能的终端中，按住 Ctrl+单击报错信息提示的下载url 跳转到浏览器下载，等一小会重新运行 xmake 即可。这种方法适用于使用浏览器插件作为代理或者不喜欢每次在命令行进行设置的同学。
   
 - Q. 提示找不到编译器怎么办？
 
