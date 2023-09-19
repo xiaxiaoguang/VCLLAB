@@ -73,15 +73,17 @@ git checkout lab0
     你会在 `vcx/build/xcode` 目录下找到 XCode 项目文件。
 
  -  VS Code（图形化配置方案）：
-    1. 安装 C/C++ 插件与 XMake 插件。
-    2. 选中顶部的 `View -> Command Palette...` ，输入 `XMake:` ，选择 `XMake: Update Intellisense` 。
-    3. 选中顶部的 `View -> Command Palette...` ，输入 `C/C++:` ，选择 `C/C++: Edit Configurations (UI)` 。
-    4. 选中 `C++ standard` 项，修改设置为 `C++20` 。
-    5. 拉到最下方，点开 `Advanced Settings` ，在 `Compile Commands` 一栏输入 `${workspaceFolder}/.vscode/compile_commands.json`
-    6. 返回 cpp 文件，现在 VS Code 应该已经能提供智能提示等功能了。
-
- -  *VS Code（命令行配置方案）：
-    首先执行 `xmake project -k compile_commands ./.vscode`。
+    
+    1. 首先执行 `xmake project -k compile_commands ./.vscode` 。
+    2. 安装 C/C++ 插件与 XMake 插件。
+    3. 选中顶部的 `View -> Command Palette...` ，输入 `XMake:` ，选择 `XMake: Update Intellisense` 。
+    4. 选中顶部的 `View -> Command Palette...` ，输入 `C/C++:` ，选择 `C/C++: Edit Configurations (UI)` 。
+    5. 选中 `C++ standard` 项，修改设置为 `C++20` 。
+    6. 拉到最下方，点开 `Advanced Settings` ，在 `Compile Commands` 一栏输入 `${workspaceFolder}/.vscode/compile_commands.json`
+    7. 返回 cpp 文件，现在 VS Code 应该已经能提供智能提示等功能了。
+    
+ -  VS Code（命令行配置方案）：
+    首先执行 `xmake project -k compile_commands ./.vscode` 。
     然后你需要在 `vcx/.vscode` 目录下新建一个名为 `c_cpp_properties.json` 的文件，并写入：
     
     ```json
