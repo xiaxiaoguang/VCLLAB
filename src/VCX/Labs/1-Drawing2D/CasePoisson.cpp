@@ -10,7 +10,7 @@ namespace VCX::Labs::Drawing2D {
 
     static constexpr auto       c_FrontSize = std::pair(280U, 111U);
     static constexpr auto       c_BackSize  = std::pair(1706U, 1280U);
-    static constexpr glm::ivec2 c_Offset { 500U, 300U };
+    static constexpr glm::ivec2 c_Offset { 250U, 300U };
 
     static void Overlap(Common::ImageRGB & output, Common::ImageRGB const & inputBack, Common::ImageRGB const & inputFront, const glm::ivec2 & offset) {
         output = inputBack;
