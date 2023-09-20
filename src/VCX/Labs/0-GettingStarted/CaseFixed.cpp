@@ -6,13 +6,13 @@
 
 namespace VCX::Labs::GettingStarted {
     static constexpr auto c_Sizes = std::to_array<std::pair<std::uint32_t, std::uint32_t>>({
-        { 320U, 320U },
-        { 640U, 640U } 
+        { 600U, 640U },
+        { 1024U, 100U } 
     });
 
     static constexpr auto c_SizeItems = std::array<char const *, 2> {
-        "Small (320 x 320)",
-        "Large (640 x 640)"
+        "Small (600 x 640)",
+        "Large (1024 x 100)"
     };
 
     static constexpr auto c_BgItems = std::array<char const *, 3> {
@@ -47,7 +47,7 @@ namespace VCX::Labs::GettingStarted {
             _task.Emplace([this, width, height]() {
                 Common::ImageRGB image(0, 0);
                 switch (_bgId) {
-                case 0:
+                case 0:// 创造白/黑/检验图三中北京
                     image = Common::CreatePureImageRGB(width, height, { 1., 1., 1. });
                     break;
                 case 1:
@@ -59,7 +59,7 @@ namespace VCX::Labs::GettingStarted {
                 }
                 for (std::size_t x = 0; x < width; ++x)
                     for (std::size_t y = 0; y < height; ++y)
-                        if (x + y < width) image.At(x, y) = { 1., 0., 0. };
+                        if (x + y < width) image.At(x, y) = { 1., 0.4, 0.2 };//纯红色
                 return image;
             });
         }

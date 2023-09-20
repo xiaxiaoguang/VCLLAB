@@ -3,16 +3,18 @@
 #include "Labs/Common/ImGuiHelper.h"
 
 namespace VCX::Labs::GettingStarted {
-    static constexpr auto c_PositionData = std::to_array<glm::vec2>({
-        { -0.5, -0.5 },
-        {  0  ,  0.5 },
-        {  0.5, -0.5 },
-    });
 
+//在这里选择每个顶点距离画框多少，中间两行控制三角形上顶点，上面为左下
+    static constexpr auto c_PositionData = std::to_array<glm::vec2>({
+        { -1, -1 },
+        {  0  ,  1 },
+        {  1, -1 },
+    });
+// 在这里选择红绿蓝，中间为绿,上面为红，下面为蓝
     static constexpr auto c_ColorData = std::to_array<glm::vec3>({
-        { 1, 0, 0 },
-        { 0, 1, 0 },
-        { 0, 0, 1 },
+        { 1, 1, 1 },
+        { 0, 0.9, 0 },
+        { 0, 0, 0.9 },
     });
 
     CaseResizable::CaseResizable() :

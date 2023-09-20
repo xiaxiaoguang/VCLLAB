@@ -2,10 +2,10 @@
 
 layout(location = 0) in  vec2 a_Position;
 layout(location = 1) in  vec3 a_Color;
-
 layout(location = 0) out vec3 v_Color;
 
 void main() {
-    gl_Position = vec4(a_Position, 0., 1.);
+    gl_Position = vec4(a_Position, 0., 1.);// 第二个参数是呈现在画框中的局部比例？越小呈现的越少
+    //第一个参数看不懂
     v_Color     = a_Color;
 }

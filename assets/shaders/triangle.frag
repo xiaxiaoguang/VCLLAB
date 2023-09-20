@@ -5,5 +5,5 @@ layout(location = 0) in  vec3 v_Color;
 layout(location = 0) out vec4 f_Color;
 
 void main() {
-    f_Color = vec4(v_Color, 1.);
+    f_Color = vec4(v_Color, 1.); // 这个参数决定他的亮度
 }

@@ -6,8 +6,8 @@
 namespace VCX::Assets {
     inline constexpr auto DefaultIcons {
         std::to_array<std::string_view>({
-            "assets/images/vcl-logo-32x32.png",
-            "assets/images/vcl-logo-48x48.png",
+            "assets/images/vcl-logo-48x48.png",// 哈哈哈
+            "assets/images/vcl-logo-256x256.png",
         })
     };
 
