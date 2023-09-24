@@ -11,10 +11,6 @@ namespace VCX::Engine {
     template<std::size_t Dim, TextureFormat Format>
         requires (Dim == 1 || Dim == 2 || Dim == 3)
     class TextureND {
-        template<std::size_t OtherDim, TextureFormat OtherFormat>
-            requires (OtherDim == 1 || OtherDim == 2 || OtherDim == 3)
-        friend class TextureND;
-
     private:
         std::array<std::size_t, Dim>          _size;
         std::vector<typename Format::Encoded> _data;
