@@ -126,6 +126,7 @@ namespace VCX::Labs::Drawing2D {
     }
 
     /******************* 7. Bezier Curve *****************/
+    // Note: Please finish the function [DrawLine] before trying this part.
     glm::vec2 CalculateBezierPoint(
         std::span<glm::vec2> points,
         float const          t) {
