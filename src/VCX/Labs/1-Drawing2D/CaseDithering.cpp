@@ -132,7 +132,7 @@ namespace VCX::Labs::Drawing2D {
         if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && delta.y != 0.f)
             ImGui::SetScrollY(window, window->Scroll.y - delta.y);
         if (_enableZoom && ! anyHeld && ImGui::IsItemHovered()) {
-            if (_isLarge) Common::ImGuiHelper::ZoomTooltip(_texture, c_SizeLarge, pos);
+            if (_isLarge) Common::ImGuiHelper::ZoomTooltip(_textureLarge, c_SizeLarge, pos);
             else Common::ImGuiHelper::ZoomTooltip(_texture, c_Size, pos);
         }
     }
