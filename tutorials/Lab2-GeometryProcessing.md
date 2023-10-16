@@ -291,12 +291,12 @@ namespace VCX::Labs::GeometryProcessing {
   color1.y;  // 0.2
   color1.g;  // 0.2
   color1.t;  // 0.2
-  color1[0]; // 0.2
+  color1[1]; // 0.2
   
   color1.z;  // 0.7
   color1.b;  // 0.7
   color1.p;  // 0.7
-  color1[0]; // 0.7
+  color1[2]; // 0.7
   ```
 
   ```python
