@@ -22,5 +22,19 @@ namespace VCX::Engine {
         std::pair<glm::vec3, glm::vec3> GetAxisAlignedBoundingBox() const;
 
         void NormalizePositions(glm::vec3 const & minAABB = glm::vec3(-0.5f), glm::vec3 const & maxAABB = glm::vec3(0.5f));
+
+        void Swap(SurfaceMesh & rhs) noexcept {
+            Positions.swap(rhs.Positions);
+            Normals.swap(rhs.Normals);
+            TexCoords.swap(rhs.TexCoords);
+            Indices.swap(rhs.Indices);
+        }
+
+        void Swap(SurfaceMesh && rhs) noexcept {
+            Positions.swap(rhs.Positions);
+            Normals.swap(rhs.Normals);
+            TexCoords.swap(rhs.TexCoords);
+            Indices.swap(rhs.Indices);
+        }
     };
 }
