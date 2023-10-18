@@ -249,8 +249,7 @@ namespace VCX::Labs::GeometryProcessing {
             }
 
             // Finally, as the Q matrix changed, we should update the relative $ConstractionPair$ in $pairs$.
-            // Any pair with the Q matrix of its endpoints changed, should be remade by $MakePair$
-            // Hint: the official code checks three rings.
+            // Any pair with the Q matrix of its endpoints changed, should be remade by $MakePair$.
             // your code here:
 
         }
