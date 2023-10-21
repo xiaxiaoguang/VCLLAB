@@ -51,7 +51,7 @@ namespace VCX::Labs::GeometryProcessing {
         struct Triangle {
         public:
             HalfEdge const * Edge(Label i) const { return _e + i; }
-            VertexIdx        VertexIndex(Label i) const { return _e[i]._to; }
+            VertexIdx        VertexIndex(Label i) const { return _e[i].NextEdge()->_to; }
 
             Triangle const * OppositeFace(Label i) const { return _e[i].OppositeFace(); }
             VertexIdx        OppositeVertex(Label i) const { return _e[i].TwinOppositeVertex(); }
