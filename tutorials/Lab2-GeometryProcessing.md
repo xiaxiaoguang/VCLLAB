@@ -74,7 +74,7 @@ $$
 
 ## Task 3: Mesh Simplification (2.5')
 
-请理解并实现课件中介绍的网格简化算法。算法来自于论文 [Surface Simplification Using Quadric Error Metrics](https://people.eecs.berkeley.edu/~jrs/meshpapers/GarlandHeckbert2.pdf) 。你需要实现 `void SimplifyMesh(Engine::SurfaceMesh const & input, Engine::SurfaceMesh & output, float simplification_ratio)` 函数，其中，`input` 和 `output` 分别为算法输入的网格和输出的网格，输入为水密网格，因此不用考虑边界边 (boundary edge)，`simplification_ratio` 是该简化算法保留顶点的比例 $(\in [0,1])$ 。这里给出大致的算法流程，同论文 4.1 节类似，但略有不同（具体来说，我们需要实现的算法只考虑已有边的坍缩，即论文 3.2 节中列出的两个坍缩条件，我们不考虑第二种 non-edge contraction 的情况，如论文图 2 所示）：
+请理解并实现课件中介绍的网格简化算法。算法来自于论文 [Surface Simplification Using Quadric Error Metrics](https://dl.acm.org/doi/pdf/10.1145/258734.258849) 。你需要实现 `void SimplifyMesh(Engine::SurfaceMesh const & input, Engine::SurfaceMesh & output, float simplification_ratio)` 函数，其中，`input` 和 `output` 分别为算法输入的网格和输出的网格，输入为水密网格，因此不用考虑边界边 (boundary edge)，`simplification_ratio` 是该简化算法保留顶点的比例 $(\in [0,1])$ 。这里给出大致的算法流程，同论文 4.1 节类似，但略有不同（具体来说，我们需要实现的算法只考虑已有边的坍缩，即论文 3.2 节中列出的两个坍缩条件，我们不考虑第二种 non-edge contraction 的情况，如论文图 2 所示）：
 
 1. 按照论文第五节的说明，为每个初始顶点计算二次代价矩阵 $Q_i$ ；
 2. 选择所有坍缩后仍然保持网格拓扑结构的顶点对，作为合法的顶点对；
