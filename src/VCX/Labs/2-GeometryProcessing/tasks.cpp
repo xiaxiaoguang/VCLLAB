@@ -43,8 +43,8 @@ namespace VCX::Labs::GeometryProcessing {
             // Iteratively process each halfedge.
             for (auto e : G.Edges()) {
                 // newIndices[face index][vertex index] = index of the newly generated vertex
-                newIndices[G.IndexOf(e->Face())][e->Label()] = curr_mesh.Positions.size();
-                auto eTwin                                   = e->TwinEdgeOr(nullptr);
+                newIndices[G.IndexOf(e->Face())][e->EdgeLabel()] = curr_mesh.Positions.size();
+                auto eTwin                                       = e->TwinEdgeOr(nullptr);
                 // eTwin stores the twin halfedge.
                 if (! eTwin) {
                     // When there is no twin halfedge (so, e is a boundary edge):
@@ -54,7 +54,7 @@ namespace VCX::Labs::GeometryProcessing {
                     //     newIndices[face index][vertex index] = index of the newly generated vertex
                     // Because G.Edges() will only traverse once for two halfedges,
                     //     we have to record twice.
-                    newIndices[G.IndexOf(eTwin->Face())][e->TwinEdge()->Label()] = curr_mesh.Positions.size();
+                    newIndices[G.IndexOf(eTwin->Face())][e->TwinEdge()->EdgeLabel()] = curr_mesh.Positions.size();
                     // your code here: generate the new vertex and add it into curr_mesh.Positions.
                 }
             }

@@ -227,15 +227,15 @@ namespace VCX::Labs::GeometryProcessing {
 
 + `e->To()` ：这条半边指向的顶点的索引；
 + `e->From()` ：这条半边起点的索引；
-+ `e->NextEdge()` ：沿着同样方向的下一条半边（它的起点就是半边 `e` 指向的顶点）；
-+ `e->PrevEdge()` ：沿着同样方向的上一条半边（它指向半边 `e` 的起点）；
++ `e->NextEdge()` ：在同一个三角形中，沿着同样方向的下一条半边（它的起点就是半边 `e` 指向的顶点）；
++ `e->PrevEdge()` ：在同一个三角形中，沿着同样方向的上一条半边（它指向的顶点就是半边 `e` 的起点）；
 + `e->TwinEdge()` ：和这条半边方向相反的半边（请先检查这个半边存在）；
 + `e->TwinEdgeOr(default_e)` ：和这条半边方向相反的半边（如果这个半边不存在，返回 `default_e` ）；
 + `e->OppositeVertex()` ：`e` 所在的面上，与 `e` 不相交的那个顶点的索引；
 + `e->Face()` ：半边所在的面结构；
 + `e->OppositeFace()` ：`e->TwinEdge()` 所在的面结构（请先检查 `e->TwinEdge` 存在）；
 + `e->TwinOppositeVertex()` ：`e->TwinEdge()` 所在的面上，与 `e->TwinEdge()` 不相交的那个顶点的索引（请先检查 `e->TwinEdge` 存在）；
-+ `e->Label()` ：`e->From()` 在 `e->Face()` 中的序号 (0,1,2)，即等价 `e->Face()->LabelOfVertex(e->From())` 。
++ `e->EdgeLabel()` ：`e` 在 `e->Face()` 中的序号 (0,1,2)，满足 `e == e->Face()->Edge(e->EdgeLabel())` 。
 
 ![](images/DCEL.png)
 

@@ -16,7 +16,7 @@ namespace VCX::Labs::GeometryProcessing {
         struct Triangle;
 
         struct HalfEdge {
-            VertexIdx To() const { return _to; }
+            VertexIdx To() const & { return _to; }
             VertexIdx From() const & { return this[_prev]._to; }
 
             HalfEdge const * NextEdge() const & { return this + _next; }
@@ -30,7 +30,7 @@ namespace VCX::Labs::GeometryProcessing {
             VertexIdx        TwinOppositeVertex() const & { return this[_twin].OppositeVertex(); }
 
             bool  CountOnce() const & { return _twin < 0; }
-            Label Label() const { return _idx; }
+            Label EdgeLabel() const & { return _idx; }
 
             HalfEdge()                 = default;
             HalfEdge(HalfEdge &&)      = default;
