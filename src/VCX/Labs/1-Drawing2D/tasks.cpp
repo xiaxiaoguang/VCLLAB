@@ -1,13 +1,124 @@
 #include <random>
-
 #include <spdlog/spdlog.h>
-
 #include "Labs/1-Drawing2D/tasks.h"
-
 using VCX::Labs::Common::ImageRGB;
 
 namespace VCX::Labs::Drawing2D {
+    /******************* 0.Prepare Tool for computing geometry *****************/
+
+    using COL = glm::vec3;
+    using Point=glm::ivec2;
+    using fPoint = glm::vec2;
+    using std::swap;
+    using std::min;
+    using std::max;
+
+    fPoint operator*(double b,fPoint a){
+        return fPoint(a[0] * b,a[1] * b);
+    }
+    fPoint operator+(fPoint a,fPoint b){
+        return fPoint(a[0] + b[0],a[1] + b[1]);
+    }        
+    Point operator-(Point a,Point b){
+        return Point(a[0]-b[0],a[1]-b[1]);
+    }
+    void swap(Point &a,Point &b){
+        Point c;
+        c=a;
+        a=b;
+        b=c;
+        return ;
+    }    
+    bool operator==(COL a,COL b){
+        return (a[0]==b[0]) && (a[1]==b[1]) && (a[2]==b[2]);
+    }
+
+    int sgn(int x){
+        if(!x)return 0;
+        if(x<0)return -1;
+        else return 1;
+    }
+    int operator^(const Point &x,const Point &y){// cross product
+        return x.x*y.y-x.y*y.x;
+    }
+    struct Line{
+        Point e;
+        Point s;
+        Line(){};
+        Line(Point _s,Point _e):s(_s),e(_e){};
+        int relation(Point p){
+            int c=sgn((p-s)^(e-s));
+            if(c<0)return 1;
+            else if(c>0)return 2;
+            else return 3;
+        }
+    };
+
+    COL operator+(COL a,double x){
+        return COL(a[0]+x,a[1]+x,a[2]+x);
+    }
+
+    COL operator+(COL a,COL b){
+        return COL(a[0]+b[0],a[1]+b[1],a[2]+b[2]);
+    }       
+
+    COL operator/(COL a,double b){
+        return COL(a[0]/b,a[1]/b,a[2]/b);
+    }        
+    
+    COL Cabs(COL a){
+        return COL(fabs(a[0]),fabs(a[1]),fabs(a[2]));
+    }
+    COL operator-(COL a,COL b){
+        return COL(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
+    }
+    double len(const COL &a){
+        return a[0]*a[0]+a[1]*a[1]+a[2]*a[2];
+    }
+
+    COL operator*(double b,COL a){
+        return COL(a[0]*b,a[1]*b,a[2]*b);
+    }
+    COL operator*(COL b,COL a){
+        return COL(a[0]*b[0],a[1]*b[1],a[2]*b[2]);
+    }    
+    COL Fv(COL a){
+        return COL(pow(a[0],0.5),pow(a[1],0.5),pow(a[2],0.5));
+    }
     /******************* 1.Image Dithering *****************/
+
+    void Cwrite(ImageRGB & otp,int x,int y,double c){
+        for(int i=0;i<3;++i){
+            for(int j=0;j<3;++j){
+                otp.At(i+x,j+y)=COL(0,0,0);
+            }
+        }       
+        otp.At(1+x,1+y)=COL(1,1,1);
+        if(c>=0.125){
+            otp.At(x,1+y)=COL(1,1,1);
+        }
+        if(c>=0.25){
+            otp.At(1+x,2+y)=COL(1,1,1);
+        }
+        if(c>=0.375){
+            otp.At(x+2,1+y)=COL(1,1,1);
+        }
+        if(c>=0.5){
+            otp.At(x+2,y)=COL(1,1,1);
+        }
+        if(c>=0.625){
+            otp.At(x,2+y)=COL(1,1,1);
+        }
+        if(c>=0.75){
+            otp.At(x,y)=COL(1,1,1);
+        }
+        if(c>=0.875){
+            otp.At(x+2,y+2)=COL(1,1,1);
+        }
+        if(c>=0.99){
+            otp.At(x+1,y)=COL(1,1,1);
+        }
+    }    
     void DitheringThreshold(
         ImageRGB &       output,
         ImageRGB const & input) {
@@ -25,46 +136,78 @@ namespace VCX::Labs::Drawing2D {
     void DitheringRandomUniform(
         ImageRGB &       output,
         ImageRGB const & input) {
-        // your code here:
+        int n=input.GetSizeX(),m=input.GetSizeY();
+        srand(time(NULL));
+        for(int i=0;i<n;++i){
+            for(int j=0;j<m;++j){
+                double rd=(double)rand()/RAND_MAX - 0.5;
+                COL color = input.At(i,j);
+                output.At(i,j)= Cabs(color + rd);
+            }
+        }
+        DitheringThreshold(output,output);
     }
 
     void DitheringRandomBlueNoise(
         ImageRGB &       output,
         ImageRGB const & input,
         ImageRGB const & noise) {
-        // your code here:
+        int n=input.GetSizeX(),m=input.GetSizeY();
+        for(int i=0;i<n;++i){
+            for(int j=0;j<m;++j){
+                COL color = input.At(i,j) - noise.At(i,j) + 0.5; // 这里是蓝噪音分布的问题！！
+                output.At(i,j)= color;
+            }
+        }
+        DitheringThreshold(output,output);
     }
-
     void DitheringOrdered(
         ImageRGB &       output,
         ImageRGB const & input) {
-        // your code here:
+        int n = input.GetSizeX(),m = input.GetSizeY();
+        for(int i=0;i<n;++i){
+            for(int j=0;j<m;++j){
+                COL color= input.At(i,j);
+                Cwrite(output,i*3,j*3,color[0]);
+            }
+        }
     }
-
     void DitheringErrorDiffuse(
         ImageRGB &       output,
         ImageRGB const & input) {
-        // your code here:
+        int n = input.GetSizeX(),m=input.GetSizeY();
+        for(int i=0;i<n;++i){
+            for(int j=0;j<m;++j){
+                output.At(i,j)=input.At(i,j);
+            }
+        }
+        for(int i=0;i<n;++i){
+            for(int j=0;j<m;++j){
+                COL color = output.At(i,j);
+                double res = 0;
+                if(color[0]>0.5){
+                    res = color[0]-1;
+                    output.At(i,j)=COL(1,1,1);
+                }
+                else {
+                    res=color[0];
+                    output.At(i,j)=COL(0,0,0);
+                }
+                if(j<m-1)output.At(i,j+1)=(COL)output.At(i,j+1) + res*7/16;
+                if(i<n-1)output.At(i+1,j)=(COL)output.At(i+1,j) + res*5/16;
+                if(i<n-1 && j<m-1)output.At(i+1,j+1)=(COL)output.At(i+1,j+1) + res/16;
+                if(i<n-1 && j>0)output.At(i+1,j-1)=(COL)output.At(i+1,j-1) + res*3/16;
+            }
+        }
     }
 
     /******************* 2.Image Filtering *****************/
-    using COL = glm::vec3;
-    COL operator-(COL a,COL b){
-        return COL(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
-    }
-    COL operator+(COL a,COL b){
-        return COL(a[0]+b[0],a[1]+b[1],a[2]+b[2]);
-    }    
-    COL operator/(COL a,double b){
-        return COL(a[0]/b,a[1]/b,a[2]/b);
-    }    
-    COL operator*(double b,COL a){
-        return COL(a[0]*b,a[1]*b,a[2]*b);
-    }
     const int dx[] = {0,1,-1,0,1,-1,  0,1,-1};
     const int dy[] = {0,0,0 ,1,1,1 ,-1,-1,-1};
-    const double Blur[] ={0.111,0.111,0.111,0.111,0.111,0.111,0.111,0.111,0.111};
-    const int Edge[3][3] ={{1,0,-1},{2,0,-2},{1,0,-1}};
+    const double Blurv[] ={0.111,0.111,0.111,0.111,0.111,0.111,0.111,0.111,0.111};
+    const int LEdgev[3][3] ={{-1,0,1},{-2,0,2},{-1,0,1}};
+    const int HEdgev[3][3] ={{1,2,1},{0,0,0},{-1,-2,-1}};
+
     COL calcBlursimple(ImageRGB const & canvas,int x,int y){
         COL color1 = canvas.At(x + 1,y);
         COL color2 = canvas.At(x - 1,y);
@@ -73,28 +216,41 @@ namespace VCX::Labs::Drawing2D {
         COL color5 = canvas.At(x,    y);
         return (color1+color2+color3+color4+color5)/5;
     }
+
     COL calcBlur(ImageRGB const & canvas,int x,int y){
         COL color = COL(0,0,0);
         for(int i=0;i<9;++i){
-            color = color + Blur[i] * (COL)(canvas.At(x+dx[i],y+dy[i]));
+            color = color + Blurv[i] * (COL)(canvas.At(x+dx[i],y+dy[i]));
         }
         return color;
     }    
-    COL calcEdge(Image const &canvas ,int x,int y){
+
+    COL L_calcEdge(ImageRGB const &canvas ,int x,int y){
         COL color = COL(0,0,0);
         for(int i=0;i<3;++i){
             for(int j=0;j<3;++j){
-                color = color + Edge[i][j] * (COL)canvas.At(x+dx[i],y+dy[j]);
+                color = color + LEdgev[i][j] * (COL)canvas.At(x+i-1,y+j-1);
             }
         }
         return color;
     }
+
+    COL H_calcEdge(ImageRGB const &canvas ,int x,int y){
+        COL color = COL(0,0,0);
+        for(int i=0;i<3;++i){
+            for(int j=0;j<3;++j){
+                color = color + HEdgev[i][j] * (COL)canvas.At(x+i-1,y+j-1);
+            }
+        }
+        return color;
+    }    
+
     void Blur(
         ImageRGB &       output,
         ImageRGB const & input) {
-        // printf("%d %d %d %d\n",output.GetSizeX(),output.GetSizeY(),input.GetSizeX(),input.GetSizeY());
-        // your code here:
         int n = output.GetSizeX(),m=output.GetSizeY();
+        for(int i=0;i<n;++i){output.At(i,0)=input.At(i,0);output.At(i,m-1)=input.At(i,m-1);}
+        for(int j=0;j<m;++j){output.At(0,j)=input.At(0,j);output.At(n-1,j)=input.At(n-1,j);}
         for(int i=1;i<n-1;++i){
             for(int j=1;j<m-1;++j){
                 output.At(i,j)=calcBlur(input,i,j);
@@ -104,13 +260,17 @@ namespace VCX::Labs::Drawing2D {
     void Edge(
         ImageRGB &       output,
         ImageRGB const & input) {
-        // your code here:
         int n = output.GetSizeX(),m=output.GetSizeY();
+        for(int i=0;i<n;++i){output.At(i,0)=input.At(i,0);output.At(i,m-1)=input.At(i,m-1);}
+        for(int j=0;j<m;++j){output.At(0,j)=input.At(0,j);output.At(n-1,j)=input.At(n-1,j);}
         for(int i=1;i<n-1;++i){
             for(int j=1;j<m-1;++j){
-                output.At(i,j)=calcEdge(input,i,j);
+                COL a = L_calcEdge(input,i,j);
+                COL b = H_calcEdge(input,i,j);
+                COL c = Fv(a * a + b * b);
+                output.At(i,j)= c;
             }
-        }        
+        }
     }
 
     COL calcgrade(ImageRGB const & canvas,int x,int y){
@@ -120,31 +280,25 @@ namespace VCX::Labs::Drawing2D {
         COL color4 = canvas.At(x,y - 1);
         return (color1-color2) + (color3-color4);
     }
-    double len(const COL &a){
-        return a[0]*a[0]+a[1]*a[1]+a[2]*a[2];
-    }
+
     /******************* 3. Image Inpainting *****************/
     void Inpainting(
         ImageRGB &         output,
         ImageRGB const &   inputBack,
         ImageRGB const &   inputFront,
         const glm::ivec2 & offset) {
-        // printf("%d %d\n",offset.x,offset.y);
-        // offset.x = 230;
         output             = inputBack;
         std::size_t width  = inputFront.GetSizeX();
         std::size_t height = inputFront.GetSizeY();
         glm::vec3 * g      = new glm::vec3[width * height];
 
         memset(g, 0, sizeof(glm::vec3) * width * height);
-        // set boundary condition
+
         for (std::size_t y = 0; y < height; ++y) {
             COL color =inputBack.At(offset.x,y+offset.y);
             g[y*width] = color - inputFront.At(0,y);
             color = inputBack.At(width-1+offset.x,y+offset.y);
             g[y*width+width-1]=color - inputFront.At(width-1,y);
-            // set boundary for (0, y), your code: g[y * width] = ?
-            // set boundary for (width - 1, y), your code: g[y * width + width - 1] = ?
 
         }
         for (std::size_t x = 0; x < width; ++x) {
@@ -152,28 +306,10 @@ namespace VCX::Labs::Drawing2D {
             g[x]= color - inputFront.At(x,0);
             color = inputBack.At(x+offset.x,height-1+offset.y);
             g[(height-1) * width + x] = color -inputFront.At(x,height-1);
-            // set boundary for (x, 0), your code: g[x] = ?
-            // set boundary for (x, height - 1), your code: g[(height - 1) * width + x] = ?
         }
-        // for(int x=1;x<width-1;++x){
-        //     for(int y=1;y<height-1;++y){
-        //         // COL color0=calcgrade(inputBack,offset.x+x,offset.y+y);
-        //         // COL color1=calcgrade(inputFront,x,y);
-        //         // if(len(color0)>len(color1)){
-        //         g[x + y * width] = inputBack.At(x+offset.x,offset.y+y)-inputFront.At(x,y);
-        //         // }
-        //     }
-        // }
-
-        // for(int x=0;x<width;++x){
-        //     for(int y=0;y<height;++y){
-        //         printf("%lf %lf %lf|",g[x + width*y][0],g[x + width*y][1],g[x + width*y][2]);
-        //     }
-        //     puts("");
-        // }
 
         // Jacobi iteration, solve Ag = b
-        for (int iter = 0; iter < 6000; ++iter) {
+        for (int iter = 0; iter < 8000; ++iter) {
             for (std::size_t y = 1; y < height - 1; ++y)
                 for (std::size_t x = 1; x < width - 1; ++x) {
                     g[y * width + x] = (g[(y - 1) * width + x] + g[(y + 1) * width + x] + g[y * width + x - 1] + g[y * width + x + 1]);
@@ -184,12 +320,6 @@ namespace VCX::Labs::Drawing2D {
         for (std::size_t y = 0; y < inputFront.GetSizeY(); ++y)
             for (std::size_t x = 0; x < inputFront.GetSizeX(); ++x) {
                 COL color =g[y * width + x] + inputFront.At(x, y);
-                if(x!=0 && y!=0 && x<width-1 && y<height-1){
-                    COL color0=calcgrade(inputBack,offset.x+x,offset.y+y);
-                    COL color1=calcgrade(inputFront,x,y);
-                    if(len(color0)>len(color1))
-                        color = color + inputBack.At(offset.x+x,offset.y+y);
-                }
                 output.At(x + offset.x, y + offset.y) = color;
             }
 
@@ -197,18 +327,7 @@ namespace VCX::Labs::Drawing2D {
     }
 
     /******************* 4. Line Drawing *****************/
-    using Point=glm::ivec2;
-    Point operator-(Point a,Point b){
-        return Point(a[0]-b[0],a[1]-b[1]);
-    }
-    using std::swap;
-    void swap(Point &a,Point &b){
-        Point c;
-        c=a;
-        a=b;
-        b=c;
-        return ;
-    }
+
     void DrawLine(
         ImageRGB &       canvas,
         glm::vec3 const  color,
@@ -227,7 +346,7 @@ namespace VCX::Labs::Drawing2D {
         int dy = (a[1]>b[1])?(-1):1;
         bool flg2=1;
         if(((Ndx < 0) && (Ndy < 0)) || ((Ndx > 0) && (Ndy > 0))){
-            swap(a[1],b[1]);//交换y坐标
+            swap(a[1],b[1]);
             Ndx = 2*(b[1]-a[1]);
             flg2 = 0;
         }
@@ -248,7 +367,7 @@ namespace VCX::Labs::Drawing2D {
                     canvas.At(b[1]+ny-a[1],nx)=color;
                 }
             }
-            if(F>0)//>0,下方，小于0，上方，上方画x+1,y,下方画x+1，y+1
+            if(F>0)
             {
                 ny += dy;
                 F += Ndx + Ndy;
@@ -260,37 +379,9 @@ namespace VCX::Labs::Drawing2D {
     }
 
     /******************* 5. Triangle Drawing *****************/
-    #define max(x,y,z) (max(max(x,y),z))
-    #define min(x,y,z) (min(min(x,y),z))
-    using std::min;
-    using std::max;
-    const double eps=1e-6;
-    bool operator==(COL a,COL b){
-        printf("%f %f %f\n",a[0],a[1],a[2]);
-        return (a[0]==b[0]) && (a[1]==b[1]) && (a[2]==b[2]);
-    }
+#define max(x,y,z) (max(max(x,y),z))
+#define min(x,y,z) (min(min(x,y),z))
 
-
-    int sgn(int x){
-        if(!x)return 0;
-        if(x<0)return -1;
-        else return 1;
-    }
-    int operator^(const Point &x,const Point &y){
-        return x.x*y.y-x.y*y.x;
-    }
-    struct Line{
-        Point e;
-        Point s;
-        Line(){};
-        Line(Point _s,Point _e):s(_s),e(_e){};
-        int relation(Point p){
-            int c=sgn((p-s)^(e-s));
-            if(c<0)return 1;
-            else if(c>0)return 2;
-            else return 3;
-        }
-    };
     void DrawTriangleFilled(
         ImageRGB &       canvas,
         glm::vec3 const  color,
@@ -307,39 +398,11 @@ namespace VCX::Labs::Drawing2D {
         for(int i=dwx;i<=upx;++i){
             for(int j=dwy;j<=upy;++j){
                 auto tmp=Point(i,j);
-                // printf("%d %d\n",i,j);
-                // printf("%d-",a1.relation(tmp));
-                // printf("%d-",a2.relation(tmp));
-                // printf("%d\n",a3.relation(tmp));
                 if(a1.relation(tmp) ==a2.relation(tmp) && a2.relation(tmp)==a3.relation(tmp)){
                     canvas.At(i,j)=color;
                 }
             }
-        }        
-        // printf("%d %d %d %d\n",dwx,upx,dwy,upy);
-        // printf("COL : %f %f %f\n",color[0],color[1],color[2]);//0.6,0.2,0.1
-        // printf("%d\n",canvas.At(p0[0],p0[1])==color);
-        // for(int i=dwx;i<=upx;++i){
-            // int cnt=0;
-            // bool flg=0;
-            // for(int j=dwy;j<=upy;++j){
-                // printf("%d %d?\n",i,j);
-                // auto tmp = canvas.At(i,j);
-                // printf("%d %d %d\n",canvas.At(i,j)[0],canvas.At(i,j)[1],canvas.At(i,j)[2]);
-                // if(canvas.At(i,j)==color){
-                //     // printf("%d %d\n",i,j);
-                //     if(!flg){
-                //         flg=1;
-                //         ++cnt;
-                //     }
-                // }
-                // if(canvas.At(i,j)!=color && cnt==1){
-                //     flg=0;
-                //     canvas.At(i,j)=color;
-                // }
-        //     }
-        // }
-        // your code here:
+        }
     }
 
     /******************* 6. Image Supersampling *****************/
@@ -352,15 +415,12 @@ namespace VCX::Labs::Drawing2D {
             tmp = tmp+input.At(tx,ty);
         }
         tmp=tmp/rate;
-        // printf("%d %d %d?\n",tmp[0],tmp[1],tmp[2]);
         return tmp;
     }
     void Supersample(
         ImageRGB &       output,
         ImageRGB const & input,
         int              rate) {
-        // printf("%d %d %d %d %d\n",rate,input.GetSize()[0],input.GetSize()[1],output.GetSize()[0],output.GetSize()[1]);
-        // your code here:
         int Ix=input.GetSizeX(),Iy=input.GetSizeY();
         int Ox=output.GetSizeX(),Oy=output.GetSizeY();
         int nx=0,ny=0;
@@ -373,7 +433,6 @@ namespace VCX::Labs::Drawing2D {
         for(int i=0,nx=0;i<Ox;++i){
             for(int j=0,ny=0;j<Oy;++j){
                 output.At(i,j)=samplefrom(input,nx,ny,nx+sample[i],ny+sample[j],rate*rate);
-                // printf("%d\n",output.At(i,j)==COL(0,0,0));
                 ny += sample[j];
             } 
             nx+=sample[i];
@@ -382,26 +441,16 @@ namespace VCX::Labs::Drawing2D {
     }
 
     /******************* 7. Bezier Curve *****************/
-    // Note: Please finish the function [DrawLine] before trying this part.
-    int C[50][50];
-    using fPoint = glm::vec2;
     double tk[50],_tk[50];
-    fPoint operator*(double b,fPoint a){
-        return fPoint(a[0] * b,a[1] * b);
-    }
-    fPoint operator+(fPoint a,fPoint b){
-        return fPoint(a[0] + b[0],a[1] + b[1]);
-    }        
-    inline void init(int n,double t){
-        // printf("%lf\n",t);
+    int C[50][50];
+
+    inline void Cinit(int n,double t){
         C[0][0]=1;
         for(int i=1;i<=n;++i){
             C[i][0]=1;
             for(int j=1;j<=i;++j){
                 C[i][j]=C[i-1][j-1]+C[i-1][j];
-                // printf("%d ",C[i][j]);
             }
-            // puts("");
         }
         tk[0]=_tk[0]=1;
         for(int i=1;i<=n;++i)tk[i]=tk[i-1]*t;
@@ -424,4 +473,6 @@ namespace VCX::Labs::Drawing2D {
         }
         return pointrc[0];
     }
+#undef max
+#undef min
 } // namespace VCX::Labs::Drawing2D
