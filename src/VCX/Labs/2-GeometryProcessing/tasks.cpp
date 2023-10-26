@@ -72,7 +72,6 @@ namespace VCX::Labs::GeometryProcessing {
                 spdlog::warn("VCX::Labs::GeometryProcessing::SubdivisionMesh(..): Non-manifold mesh.");
                 return;
             }
-            // printf("%d %d %d?\n ",prev_mesh.Positions[0][0],prev_mesh.Positions[0][1],prev_mesh.Positions[0][2]);
             // Note that here curr_mesh has already been empty.
             // We reserve memory first for efficiency.
             curr_mesh.Positions.reserve(prev_mesh.Positions.size() + prev_mesh.Indices.size());//分配空间
@@ -125,11 +124,6 @@ namespace VCX::Labs::GeometryProcessing {
                     curr_mesh.Positions.emplace_back(nv);
                 }
             }
-            // printf("%d %d\n",cnt,prev_mesh.Indices.size());
-            // for(auto p : curr_mesh.Positions){
-            //     outnode(p);
-            // }
-            // puts("");
             // Here we've already build all the vertices.
             // Next, it's time to reconstruct face indices.
             for (std::size_t i = 0; i < prev_mesh.Indices.size(); i += 3U) {
@@ -140,13 +134,6 @@ namespace VCX::Labs::GeometryProcessing {
                 auto v1           = prev_mesh.Indices[i + 1U];
                 auto v2           = prev_mesh.Indices[i + 2U];
                 auto [m0, m1, m2] = newIndices[i / 3U];
-                // printf("%d %d %d %d %d %d\n",v0,v1,v2,m0,m1,m2);
-                // outnode(prev_mesh.Positions[v0]);
-                // outnode(prev_mesh.Positions[v1]);
-                // outnode(prev_mesh.Positions[v2]);
-                // outnode(curr_mesh.Positions[m0]);
-                // outnode(curr_mesh.Positions[m1]);
-                // outnode(curr_mesh.Positions[m2]);
                 // Note: m0 is on the opposite edge (v1-v2) to v0.
                 // Please keep the correct indices order (consistent with order v0-v1-v2)
                 //     when inserting new face indices.
@@ -182,18 +169,14 @@ namespace VCX::Labs::GeometryProcessing {
         output = input;
         // Reset output.TexCoords.
         output.TexCoords.resize(input.Positions.size(), glm::vec2 { 0 });
-
         // Build DCEL.
         DCEL G(input);
         if (! G.IsManifold()) {
             spdlog::warn("VCX::Labs::GeometryProcessing::Parameterization(..): non-manifold mesh.");
             return;
         }
-
         // Set boundary UVs for boundary vertices.
         // your code here: directly edit output.TexCoords
-        // printf("%d %d %d\n",output.TexCoords.size(),output.Positions.size(),input.TexCoords.size());
-
         std::vector<int> to,que;
         to.resize(output.Positions.size());
         for(int i=0;i<to.size();++i)to[i]=0;
@@ -217,10 +200,6 @@ namespace VCX::Labs::GeometryProcessing {
         double res = 1.0/(s-p-p-p);
         for(int i=0;i<s;++i){
             auto &u=output.TexCoords[que[i]];
-            // y=0,x=0-1
-            // x=1,y=0-1
-            // y=1,x=1-0
-            // x=0,y=1-0
             if(i >= s-p){
                 u = {0.0,(s-i)*dp};
             }else if(i >= s-p-p){
@@ -285,9 +264,6 @@ namespace VCX::Labs::GeometryProcessing {
     }
     planes calc_planes(point a,point b,point c){
             planes tmp;
-            //     a = (p2.y - p1.y)*(p3.z - p1.z) - (p2.z - p1.z)*(p3.y - p1.y);
-            //     b = (p2.z - p1.z)*(p3.x - p1.x) - (p2.x - p1.x)*(p3.z - p1.z);
-            //     c = (p2.x - p1.x)*(p3.y - p1.y) - (p2.y - p1.y)*(p3.x - p1.x);
             tmp.A=((b[1]-a[1])*(c[2]-a[2])-(b[2]-a[2])*(c[1]-a[1]));
             tmp.B=((b[2]-a[2])*(c[0]-a[0])-(b[0]-a[0])*(c[2]-a[2]));
             tmp.C=((b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]));
@@ -297,10 +273,6 @@ namespace VCX::Labs::GeometryProcessing {
             tmp.B/=tmpM;
             tmp.C/=tmpM;
             tmp.D/=tmpM;
-            // printf("%lf %lf %lf %lf\n",tmp.A,tmp.B,tmp.C,tmp.D);
-            // printf("%lf %lf %lf\n",tmp.getv(a),tmp.getv(b),tmp.getv(c));
-            // exit(0);
-            // assert(tmp.getv(a)+tmp.getv(b)+tmp.getv(c)>eps);
             return tmp;
     }    
     CostMatrix selfmul_planes(planes a,CostMatrix &ret){
@@ -362,39 +334,22 @@ namespace VCX::Labs::GeometryProcessing {
         }
         return ret;
     }
-    double _calct(CostMatrix A,glm::vec4 B,glm::vec4 C){
-        // double tmp=max(min(min(fabs(B[0]),fabs(B[1])),fabs(B[2])),(float)1e-4);
-        // B=B/tmp;
-        // tmp       =max(min(min(fabs(C[0]),fabs(C[1])),min(fabs(C[2]),C[3])),(float)1e-4);
-        // C=C/tmp;
-        // printf("%lf\n",tmp);
-        // outnode(C);
+    double _calct(const CostMatrix &A,glm::vec4 B,glm::vec4 C){
         double x=0;
         double x2=0;
-        double b=0;
         for(int i=0;i<4;++i){
             for(int j=0;j<4;++j){
                 x2  += (double)B[i]*A[i][j]*B[j];
-                x   += (double)B[i]*C[j]*A[i][j]+C[i]*B[j]*A[i][j];
-                b   += (double)C[i]*A[i][j]*C[j];
+                x   += (double)B[i]*C[j]*A[i][j]+(double)C[i]*B[j]*A[i][j];
             }
         }
-        // outMat(A);
-        // outnode(B);
-        // outnode(C);
-        // printf("! %.10lf %.10lf %.10lf\n",x2,x,b);
-        // puts("---");
-        // if(x2<eps)return 0;
-        b = -x/(2*x2);
-        printf("result : %lf\n",b);
-        // if(fabs(x2)<1e-8)return -x*inf;
-        return min(b,1.0);
-        // if(b<=2 && b>=-2)return b;
-        // else return 0.5;
+        double b = -x/(2*x2);
+        if(b>1-eps)b=1.0;
+        else if(b<eps)b=0;
+        return b;
     }
     /******************* 3. Mesh Simplification *****************/
     void SimplifyMesh(Engine::SurfaceMesh const & input, Engine::SurfaceMesh & output, float simplification_ratio) {
-
         DCEL G(input);
         if (! G.IsManifold()) {
             spdlog::warn("VCX::Labs::GeometryProcessing::SimplifyMesh(..): Non-manifold mesh.");
@@ -417,7 +372,6 @@ namespace VCX::Labs::GeometryProcessing {
                 return Q;
             }
         };
-
         // The struct to record constraction info.
         struct ConstractionPair {
             DCEL::HalfEdge const * edge;            // which edge to constract; if $edge == nullptr$, it means this pair is no longer valid
@@ -425,7 +379,6 @@ namespace VCX::Labs::GeometryProcessing {
             float                  cost;            // the cost $v.T * Qbar * v$
             ConstractionPair(){};
         };
-
         // Given an edge (v1->v2), the positions of its two endpoints (p1, p2) and the Q matrix (Q1+Q2),
         //     return the ConstractionPair struct.
         static constexpr auto MakePair {
@@ -441,34 +394,10 @@ namespace VCX::Labs::GeometryProcessing {
                 tQ[3][0]=tQ[3][1]=tQ[3][2]=0;tQ[3][3]=1;
                 int c = getInverse(tQ);
                 if(c==0){
-                    // do{
-                    tQ=Q;
-                    // tQ[3][0]=tQ[3][1]=tQ[3][2]=0;
-                    // tQ[3][3]=0;
-                    //     for(int i=0;i<4;++i){
-                    //         for(int j=0;j<4;++j){
-                    //             tQ[i][j]+=(rand()-rand())/(RAND_MAX*100.0);
-                    //         }
-                    //     }
-                    //     c = getInverse(tQ);
-                    // }
-                    // while(c==0);
-                    double t = _calct(tQ,{p1[0]-p2[0],p1[1]-p2[1],p1[2]-p2[2],0},{p2[0],p2[1],p2[2],1});
+                    double t = _calct(Q,{p1[0]-p2[0],p1[1]-p2[1],p1[2]-p2[2],0},{p2[0],p2[1],p2[2],1});
                     tmp.targetPosition = {p1[0]*t+p2[0]*(1-t),p1[1]*t+p2[1]*(1-t),p1[2]*t+p2[2]*(1-t),1};
                 }else tmp.targetPosition = {tQ[0][3],tQ[1][3],tQ[2][3],1};
                 tmp.cost=realmul(Q,tmp.targetPosition);
-                // outnode(p1);
-                // outnode(p2);
-                // outMat(Q);
-                // puts("----");
-                // outnode(tmp.targetPosition);
-                // outMat(tQ);
-                // puts("****");
-                // if(tmp.targetPosition[0]>1.0 || tmp.targetPosition[1] > 1.0 || tmp.targetPosition[2]>1.0) exit(0);
-                // printf("%lf\n",tmp.cost);
-                // printf("%lf\n",realmul(Q,{p1[0],p1[1],p1[2],1}));
-                // printf("%f %f %f\n",tmp.targetPosition[0],tmp.targetPosition[1],tmp.targetPosition[2]);
-                // exit(0);
                 return tmp;
             }
         };
@@ -492,10 +421,8 @@ namespace VCX::Labs::GeometryProcessing {
             Qv[f->VertexIndex(2)] += Q;
             Qf[G.IndexOf(f)]       = Q;
         }
-
         pair_map.reserve(G.NumOfFaces() * 3);
         pairs.reserve(G.NumOfFaces() * 3 / 2);
-
         // Initially, we make pairs from all the constractable edges.
         for (auto e : G.Edges()) {
             if (! G.IsConstractable(e)) continue;
@@ -506,9 +433,6 @@ namespace VCX::Labs::GeometryProcessing {
             pair_map[G.IndexOf(e->TwinEdge())] = pairs.size();
             pairs.emplace_back(pair);
         }
-        // puts("qwq!");
-
-
         // Loop until the number of vertices is less than $simplification_ratio * initial_size$.
         while (G.NumOfVertices() > simplification_ratio * Qv.size()) {
             // Find the constractable pair with minimal cost.
