@@ -1,0 +1,2 @@
+
+Definition. A triangular mesh $\mathcal{M} = (V, F)$ is defined by a set of vertices $V \subseteq \mathbb{R}^3$ and a set of triangular faces $F \subseteq \{1,\ldots,|V|\}^3$ such that $f = (f_1, f_2, f_3) \in F$ defines a triangular face enclosed by the corresponding vertices $v_{f_1}$, $v_{f_2}$ and $v_{f_3}$. Faces implicitly also define the edges $E(F)$ between the vertices.
