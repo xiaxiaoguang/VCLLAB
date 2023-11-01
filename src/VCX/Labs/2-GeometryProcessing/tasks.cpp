@@ -84,7 +84,7 @@ namespace VCX::Labs::GeometryProcessing {
                 auto neighbors   = v->Neighbors(); // v是节点集合，然后neighbors是邻居节点信息。都是数组变量
                 int n = neighbors.size();
                 double u = 3 / (8.0 * (n == 3 ? 2 : n));
-                auto nv = prev_mesh.Positions[i] * (1-n*u);
+                auto nv = prev_mesh.Positions[i] * (1-n*u); 
 
                 for(auto to : neighbors)nv = nv + prev_mesh.Positions[to] * u;
                 curr_mesh.Positions.emplace_back(nv);
@@ -115,7 +115,6 @@ namespace VCX::Labs::GeometryProcessing {
                     // Because G.Edges() will only traverse once for two halfedges,
                     //     we have to record twice.
                     newIndices[G.IndexOf(eTwin->Face())][e->TwinEdge()->EdgeLabel()] = curr_mesh.Positions.size();
-                    // your code here: generate the new vertex and add it into curr_mesh.Positions.
                     auto x = prev_mesh.Positions[e->OppositeVertex()];
                     auto y = prev_mesh.Positions[e->TwinOppositeVertex()];
                     auto v = prev_mesh.Positions[e->To()];
@@ -139,7 +138,6 @@ namespace VCX::Labs::GeometryProcessing {
                 //     when inserting new face indices.
                 // toInsert[i][j] stores the j-th vertex index of the i-th sub-face.
                 std::uint32_t toInsert[4][3] = { // 按照逆时针顺序来确定每个节点，每个平面具体从哪个点开始无关
-                    // your code here:
                     {m2,v1,m0},
                     {m0,v2,m1},
                     {m1,m2,m0},
@@ -212,7 +210,6 @@ namespace VCX::Labs::GeometryProcessing {
         }
         // Solve equation via Gauss-Seidel Iterative Method.
         for (int k = 0; k < numIterations; ++k) {
-            // your code here:
             for(int id=0;id<output.Positions.size();++id){
                 if(to[id])continue;
                 auto v = G.Vertex(id);
@@ -488,12 +485,6 @@ namespace VCX::Labs::GeometryProcessing {
                 vis[e->From()]=1;
                 vis[e->To()]  =1;
                 Qf[fid]      = tmpQ;
-                // your code here:
-                //     1. Compute the new Q matrix for $e->Face()$.
-                //     2. According to the difference between the old Q (in $Qf$) and the new Q (computed in step 1),
-                //        update Q matrix of each vertex on the ring (update $Qv$).
-                //     3. Update Q matrix of vertex v1 as well (update $Qv$).
-                //     4. Update $Qf$.
             }
             // Finally, as the Q matrix changed, we should update the relative $ConstractionPair$ in $pairs$.
             // Any pair with the Q matrix of its endpoints changed, should be remade by $MakePair$.
@@ -514,7 +505,6 @@ namespace VCX::Labs::GeometryProcessing {
         if (! G.DebugWatertightManifold()) {
             spdlog::warn("VCX::Labs::GeometryProcessing::SimplifyMesh(..): Result is not watertight manifold.");
         }
-
         auto exported = G.ExportMesh();
         output.Indices.swap(exported.Indices);
     }
