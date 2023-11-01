@@ -1,5 +1,5 @@
 set_project("VCX-Labs")
-set_version("2.0.0-alpha.1")
+set_version("2.0.0")
 set_xmakever("2.6.9")
 set_languages("cxx20")
 
