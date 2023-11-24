@@ -42,10 +42,10 @@ Lab 按每个 Task 的完成情况单独给分。本次 lab 一共需要实现 2
 ### Sub-Task 1 (0.5'):
 实现前向运动学 (forward kinematic) 算法。程序入口在 `tasks.cpp` 中 ForwardKinematics 函数，参数 `StartIndex` 给出了前向更新从第几个关节开始的信息。
 
-### Sub-Task 2 (0.5'):
+### Sub-Task 2 (1'):
 实现 CCD IK 算法。程序入口在 `tasks.cpp` 中 `InverseKinematicsCCD` 函数，参数 `EndPosition` 给出了目标的末端位置。
 
-### Sub-Task 3 (0.5'):
+### Sub-Task 3 (1'):
 实现 FABR IK 算法。程序入口在 `tasks.cpp` 中 `InverseKinematicsFABR` 函数，参数 `EndPosition` 给出了目标的末端位置。
 
 ### Sub-Task 4 (0.5'):
