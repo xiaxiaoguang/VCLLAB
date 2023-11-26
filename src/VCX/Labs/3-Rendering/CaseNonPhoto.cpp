@@ -80,10 +80,12 @@ namespace VCX::Labs::Rendering {
 
         glCullFace(GL_FRONT);
         glEnable(GL_CULL_FACE);
+
         for (auto const & model : _sceneObject.OpaqueModels) {
             auto const & material = _sceneObject.Materials[model.MaterialIndex];
             model.Mesh.Draw({ _backLineProgram.Use() });
         }
+        
         glCullFace(GL_BACK);
         glEnable(GL_DEPTH_TEST);
 

@@ -28,12 +28,14 @@ uniform vec3 u_CoolColor;
 uniform vec3 u_WarmColor;
 
 vec3 Shade (vec3 lightDir, vec3 normal) {
-    // your code here:
-    return vec3(0);
+    float tmp = dot(lightDir,normal);
+    if(tmp<-0.2)tmp=-0.6;
+    else if(tmp>0.5)tmp=0.75;
+    else tmp=0.15;
+    return (1+tmp)/2 * u_WarmColor + (1-tmp)/2 * u_CoolColor;
 }
 
 void main() {
-    // your code here:
     float gamma = 2.2;
     vec3 total = Shade(u_Lights[0].Direction, v_Normal);
     f_Color = vec4(pow(total, vec3(1. / gamma)), 1.);

@@ -38,17 +38,33 @@ uniform sampler2D u_HeightMap;
 
 vec3 Shade(vec3 lightIntensity, vec3 lightDir, vec3 normal, vec3 viewDir, vec3 diffuseColor, vec3 specularColor, float shininess) {
     // your code here:
-    return vec3(0);
+    //lightintensity 是光强
+    // lightDir : 光照方向
+    //normal 法线方向
+    //viewDir 视觉方向
+    //diffuse color 漫反射颜色
+    // specularcolor镜面反射颜色
+    // shininess 明亮度
+    vec3 H = (lightDir + viewDir) * 0.5;
+    vec3 Ls = specularColor * lightIntensity * pow(max(0,dot(H , normal)),shininess);
+    vec3 Ld = diffuseColor * lightIntensity *  (max(0,dot(lightDir, normal)));
+    return Ls+Ld;
 }
 
 vec3 GetNormal() {
     // Bump mapping from paper: Bump Mapping Unparametrized Surfaces on the GPU
     vec3 vn = normalize(v_Normal);
-
-    // your code here:
-    vec3 bumpNormal = vn;
-
-    return bumpNormal != bumpNormal ? vn : normalize(vn * (1. - u_BumpMappingBlend) + bumpNormal * u_BumpMappingBlend);
+    vec3 posDX = dFdx ( v_Position.xyz ); 
+    vec3 posDY = dFdy ( v_Position.xyz );
+    vec3 r1 = cross ( posDY, vn );
+    vec3 r2 = cross ( vn , posDX );
+    float det = dot (posDX , r1);
+    float Hll = texture( u_HeightMap, v_TexCoord ).x;   
+    float Hlr = texture( u_HeightMap, v_TexCoord + dFdx(v_TexCoord.xy) ).x;
+    float Hul = texture( u_HeightMap, v_TexCoord + dFdy(v_TexCoord.xy) ).x;
+    vec3 surf_grad = sign(det) * ( (Hlr - Hll) * r1 + (Hul - Hll)* r2 );           
+    vec3 vbumpnorm = vn*(1.0-u_BumpMappingBlend) + u_BumpMappingBlend * normalize ( abs(det)*vn - surf_grad );  // bump normal
+    return vbumpnorm;
 }
 
 void main() {
