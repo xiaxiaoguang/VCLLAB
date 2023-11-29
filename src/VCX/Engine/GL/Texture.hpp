@@ -49,7 +49,9 @@ namespace VCX::Engine::GL {
     public:
         static GLenum constexpr TypeEnum = TypeTrait::BindTarget;
 
-        explicit UniqueTexture(std::uint32_t const unit = 0) : _unit(unit) { }
+        UniqueTexture() : _unit(0) { }
+
+        explicit UniqueTexture(std::uint32_t const unit) : _unit(unit) { }
 
         explicit UniqueTexture(SamplerOptions && options, std::uint32_t const unit = 0) :
             _unit(unit) {

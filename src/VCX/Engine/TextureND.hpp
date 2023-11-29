@@ -92,7 +92,7 @@ namespace VCX::Engine {
             return Proxy(_data[GetIndexAt(o)]);
         }
 
-        typename Format::Decoded At(std::array<std::size_t, Dim> const & o) const {
+        typename Format::Decoded const At(std::array<std::size_t, Dim> const & o) const {
             return Format::Decode(_data[GetIndexAt(o)]);
         }
 
@@ -100,9 +100,9 @@ namespace VCX::Engine {
         Proxy At(std::size_t const x, std::size_t const y) requires (Dim == 2) { return At({ x, y }); }
         Proxy At(std::size_t const x, std::size_t const y, std::size_t const z) requires (Dim == 3) { return At({ x, y, z }); }
 
-        typename Format::Decoded At(std::size_t const x) const requires (Dim == 1) { return At({ x }); }
-        typename Format::Decoded At(std::size_t const x, std::size_t const y) const requires (Dim == 2) { return At({ x, y }); }
-        typename Format::Decoded At(std::size_t const x, std::size_t const y, std::size_t const z) const requires (Dim == 3) { return At({ x, y, z }); }
+        typename Format::Decoded const At(std::size_t const x) const requires (Dim == 1) { return At({ x }); }
+        typename Format::Decoded const At(std::size_t const x, std::size_t const y) const requires (Dim == 2) { return At({ x, y }); }
+        typename Format::Decoded const At(std::size_t const x, std::size_t const y, std::size_t const z) const requires (Dim == 3) { return At({ x, y, z }); }
         
         void Fill(typename Format::Decoded const & o) {
             std::fill(_data.begin(), _data.end(), Format::Encode(o));
