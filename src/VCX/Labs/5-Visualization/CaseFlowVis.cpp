@@ -90,7 +90,7 @@ namespace VCX::Labs::Visualization {
         if (_recompute) {
             _recompute = false;
             _task.Emplace([=]() {
-                Common::ImageRGB ret;
+                Common::ImageRGB ret(_noise.GetSizeX(), _noise.GetSizeY());
                 LIC(ret, _noise, _fields[_fieldId], _step);
                 return ret;
             });
