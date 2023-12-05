@@ -524,7 +524,7 @@ namespace VCX::Labs::GeometryProcessing {
                 double cosv = (v1*v2)/sqrt((v1*v1)*(v2*v2));
                 double sinv = sqrt(1-cosv*cosv);
                 if(fabs(sinv)<1e-3)return 1e4;
-                return sqrt(fabs(cosv/sinv));//根号余切
+                return (fabs(cosv/sinv));//根号余切
             }
         };
 
@@ -567,10 +567,12 @@ namespace VCX::Labs::GeometryProcessing {
                                 wij += GetCotangent(vangle2,u,v);
                             }
                             _v=_v+v*wij;
-                            sum=sum+wij;
+                            if(useUniformWeight)sum=sum+1.0;
+                            else sum=sum+wij;//这里应该是三角形的面积。。
                         }
                     }
                 }
+                // printf("%lf\n",sum);
                 _v=_v/sum;
                 u=(1-lambda)*u+lambda*_v;
             }
