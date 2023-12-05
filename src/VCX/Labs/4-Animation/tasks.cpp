@@ -90,12 +90,6 @@ namespace VCX::Labs::Animation {
         quat ub = cons_rotate(b, t);
         a       = qt_v3(ub * v3_qt(a - b.s) * inverse(ub)) + b.s;
     }
-    vec3 getrealend(IKSystem & ik) {
-        auto MyEnd = ik.EndEffectorPosition();
-        quat tmp   = ik.JointGlobalRotation[ik.NumJoints() - 1] * ik.JointLocalRotation[ik.NumJoints() - 1];
-        MyEnd      = MyEnd + qt_v3(tmp * v3_qt(ik.JointLocalOffset[ik.NumJoints() - 1]) * inverse(tmp));
-        return MyEnd;
-    }
     void InverseKinematicsCCD(IKSystem & ik, const glm::vec3 & EndPosition, int maxCCDIKIteration, float eps) {
         ForwardKinematics(ik, 0);//四元数生成：第一个是常数，然后第二三四个是ijk,然后输出的时候a[0]是i,a[3]才是常数
         vec3 delta = ik.EndEffectorPosition();
