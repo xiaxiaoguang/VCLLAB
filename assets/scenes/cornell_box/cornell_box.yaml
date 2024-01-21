@@ -16,18 +16,26 @@ Lights:
 
 Materials:
   - Name: wall
+    ReflectionType: Empirical
     Blend: Opaque
     Diffuse: [.4, .4, .4]
   - Name: left
+    ReflectionType: Empirical
     Blend: Opaque
     Diffuse: [.5, .0, .0]
   - Name: right
+    ReflectionType: Empirical
     Blend: Opaque
     Diffuse: [.0, .5, .0]
   - Name: box
+    ReflectionType: Empirical
     Blend: Opaque
     Diffuse: [.5, .5, .5]
     Specular: [.4, .4, .4, 32.]
+  - Name: light
+    Blend: Transparent
+    Diffuse: [0., 0., 0.]
+    Specular: [1. ,1. ,1., 100000.]
 
 Models:
   - Mesh: wall.obj
@@ -40,3 +48,5 @@ Models:
     Material: box
   - Mesh: short_block.obj
     Material: box
+  - Mesh: light.obj
+    Material: light

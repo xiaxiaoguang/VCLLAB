@@ -372,7 +372,8 @@ namespace VCX::Engine {
                 Material material;
                 if (materialNode["Name"])
                     uniqueMaterials[materialNode["Name"].as<std::string>()] = std::uint32_t(scene.Materials.size());
-
+                // 在这里！！
+                SetValue(material.Rel, materialNode["ReflectionType"]);
                 SetValue(material.Blend, materialNode["Blend"]);
 
                 glm::vec4 albedoFactor(1);
@@ -380,6 +381,7 @@ namespace VCX::Engine {
                 SetValue(albedoFactor, materialNode["Albedo"]);
                 SetValue(albedoFactor, materialNode["BaseColor"]);
                 material.Albedo.Fill(albedoFactor);
+
                 SetMap4(material.Albedo, materialNode["DiffuseMap"]  );
                 SetMap4(material.Albedo, materialNode["AlbedoMap"]   );
                 SetMap4(material.Albedo, materialNode["BaseColorMap"]);

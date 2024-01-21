@@ -31,7 +31,7 @@ namespace VCX::Labs::Rendering {
     MaterialObject::MaterialObject(Engine::Material const & material) :
         Albedo(MakeTexture(material.Albedo, 0)),
         MetaSpec(MakeTexture(material.MetaSpec, 1)),
-        Height(MakeTexture(material.Height, 2)) {
+        Height(MakeTexture(material.Height, 2)){
     }
 
     static Engine::GL::UniqueIndexedRenderItem MakeRenderItem(Engine::SurfaceMesh const & mesh) {
@@ -108,6 +108,7 @@ namespace VCX::Labs::Rendering {
         auto passConstants = PassConstants {
             .AmbientIntensity   = AmbientIntensity,
         };
+
         std::copy(Lights.data(), Lights.data() + std::min(Lights.size(), c_MaxCntLights), passConstants.Lights);
         passConstants.CntPointLights       = int(std::min(CntPointLights,        c_MaxCntLights));
         passConstants.CntSpotLights        = int(std::min(CntSpotLights,         c_MaxCntLights - passConstants.CntPointLights));

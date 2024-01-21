@@ -50,6 +50,9 @@ namespace VCX::Labs::Rendering {
         auto GetBufferSize() const { return std::pair(std::uint32_t(_buffer.GetSizeX()), std::uint32_t(_buffer.GetSizeY())); }
 
         char const *          GetSceneName(std::size_t const i) const { return Content::SceneNames[std::size_t(_scenes[i])].c_str(); }
-        Engine::Scene const & GetScene(std::size_t const i) const { return Content::Scenes[std::size_t(_scenes[i])]; }
+        Engine::Scene const & GetScene(std::size_t const i) const { 
+            
+            return Content::Scenes[std::size_t(_scenes[i])]; 
+        }
     };
 } // namespace VCX::Labs::Rendering

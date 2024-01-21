@@ -31,6 +31,7 @@ namespace VCX::Engine {
         Spot,
         Directional,
         Area,
+        Rectangle,
     };
 
     struct Light {
@@ -47,8 +48,16 @@ namespace VCX::Engine {
         Transparent,
     };
 
+    enum class ReflectionType {
+        Empirical,
+        PhysicalMetallic,
+        PhysicalDiffusion,
+        PhysicalSpecular,
+    };
+
     struct Material {
         BlendMode                     Blend;
+        ReflectionType                Rel;
         Texture2D<Formats::RGBA8>     Albedo   { 1, 1 };
         // Phong/Blinn-Phong:  MetaSpec = [Specular (RGB), Shininess  (Alpha)]
         // PBR workflow I:     MetaSpec = [Metallic (Red), Smoothness (Alpha)]
@@ -62,14 +71,9 @@ namespace VCX::Engine {
         std::uint32_t MaterialIndex { 0 };
     };
 
-    enum class ReflectionType {
-        Empirical,
-        PhysicalMetallic,
-        PhysicalSpecular,
-    };
-
     struct Scene {
         ReflectionType        Reflection       { ReflectionType::Empirical };
+
         glm::vec3             AmbientIntensity { 0.1, 0.1, 0.1 };
         std::vector<Skybox>   Skyboxes;
         std::vector<Camera>   Cameras          { Camera() };

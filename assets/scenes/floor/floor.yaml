@@ -12,15 +12,20 @@ Cameras:
 Lights:
   - Type: Point
     Position: [0, 0, 0]
-    Intensity: [1, 1, 1]
+    Intensity: [12., 12., 12.]
 
 Materials:
   - Name: wood
     Blend: Opaque
     DiffuseMap: wood.png
-    Specular: [.3, .3, .3]
+    Specular: [0, 0, 0]
     Shininess: 32
+  - Name: white
+    Blend: Transparent
+    Shininess: 100
 
 Models:
   - Mesh: floor.obj
     Material: wood
+  - Mesh: floorlight.obj
+    Material: white
